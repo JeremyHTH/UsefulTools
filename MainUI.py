@@ -6,10 +6,10 @@ from PyQt5 import QtGui
 from YoutubeDownloader import YoutubeDownloader
 
 class CenterWidget(QWidget):
-    def __init__(self, Parent):
+    def __init__(self, StatusBar):
         super().__init__()
 
-        self.Parent = Parent
+        self.StatusBar = StatusBar
         self.init_UI()
         
 
@@ -18,7 +18,7 @@ class CenterWidget(QWidget):
 
         self.CurrentWidget = YoutubeDownloader(self)
         self.layout.addWidget(self.CurrentWidget,0,0,1,1)
-        self.Parent.status.showMessage('Youtube Downloader')
+        self.StatusBar.showMessage('Youtube Downloader')
         
         self.setLayout(self.layout)
 
@@ -30,13 +30,14 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
-        self.CenterWid = CenterWidget(self)
         self.setGeometry(1,90,800,600)
         self.setWindowTitle("Useful tools")
-        self.setCentralWidget(self.CenterWid)
         self.status = QStatusBar(self)
         self.status.showMessage("Welcome")
         self.setStatusBar(self.status)
+        
+        self.CenterWid = CenterWidget(self.status)
+        self.setCentralWidget(self.CenterWid)
 
         self.setStyle(QStyleFactory.create('fusion'))
 

@@ -49,11 +49,15 @@ class YoutubeDownloader(QWidget):
         self.ResolutionRadioButtonGroup.addButton(self.CheckBox2, 2)
         self.ResolutionRadioButtonGroup.addButton(self.CheckBox3, 3)
         self.ResolutionRadioButtonGroup.buttonClicked.connect(self._ResolutionHandle)
+        RowCnt += 1
 
+        self.DownlaodButton = QPushButton("Download", self)
+        self.DownlaodButton.clicked.connect(self._downloader)
+        self.Layout.addWidget(self.DownlaodButton, RowCnt, 0, 1, 4)
         self.setLayout(self.Layout)
 
     def _downloader(self):
-        url = self.url_textbox.text()
+        url = self.URLLineEdit.text()
         try:
             youtube = YouTube(url)
             if self.downloadType == 'Video':
