@@ -20,7 +20,7 @@ class YoutubeDownloader(QWidget):
         #First Row
         self.URLLabel = QLabel("Url :",self)
         self.Layout.addWidget(self.URLLabel, RowCnt, 0, 1, 1)
-        self.URLLineEdit = QPushButton("", self)
+        self.URLLineEdit = QLineEdit("", self)
         self.Layout.addWidget(self.URLLineEdit, RowCnt, 1, 1, 3)
         RowCnt += 1
 
@@ -31,6 +31,7 @@ class YoutubeDownloader(QWidget):
         self.DownloadTypeComboBox.addItems(['Video', 'Audio'])
         self.DownloadTypeComboBox.currentIndexChanged.connect(self._DownloadTypeHandle)
         self.Layout.addWidget(self.DownloadTypeComboBox, RowCnt,1, 1, 3)
+        self.DownloadType = 'Video'
         RowCnt += 1
 
         #Third Row
@@ -49,35 +50,47 @@ class YoutubeDownloader(QWidget):
         self.ResolutionRadioButtonGroup.addButton(self.CheckBox2, 2)
         self.ResolutionRadioButtonGroup.addButton(self.CheckBox3, 3)
         self.ResolutionRadioButtonGroup.buttonClicked.connect(self._ResolutionHandle)
+        self.Resolution = 'Highest'
+        RowCnt += 1
+
+        self.DownloadPathLabel = QLabel("Download Path :", self)
+        self.Layout.addWidget(self.DownloadPathLabel, RowCnt, 0, 1, 1)
+        self.DownloadPathLineEdit = QLineEdit("", self)
+        self.Layout.addWidget(self.DownloadPathLineEdit, RowCnt, 1, 1, 2)
         RowCnt += 1
 
         self.DownlaodButton = QPushButton("Download", self)
         self.DownlaodButton.clicked.connect(self._downloader)
         self.Layout.addWidget(self.DownlaodButton, RowCnt, 0, 1, 4)
         self.setLayout(self.Layout)
+        RowCnt += 1
 
     def _downloader(self):
         url = self.URLLineEdit.text()
         try:
             youtube = YouTube(url)
-            if self.downloadType == 'Video':
-                if self.resolution == 'Highest':
+
+            if self.DownloadType == 'Video':
+                if self.Resolution == 'Highest':
                     video = youtube.streams.get_highest_resolution()
                 else:
-                    video = youtube.streams.get_by_resolution(self.resolution)
+                    video = youtube.streams.get_by_resolution(self.Resolution)
 
-                if not os.path.exists('video'):
-                    os.mkdir('video')
+                DownloadPath = os.path.join(self.DownloadPathLineEdit.text(), 'video')
 
-                video.download('video')
+                if not os.path.exists(DownloadPath):
+                    os.mkdir(DownloadPath)
 
-            elif self.downloadType == 'Audio':
+                video.download(DownloadPath)
+
+            elif self.DownloadType == 'Audio':
                 audio = youtube.streams.filter(only_audio=True)
+                DownloadPath = os.path.join(self.DownloadPathLineEdit.text(), 'audio')
 
-                if not os.path.exists('audio'):
-                    os.mkdir('audio')
+                if not os.path.exists(DownloadPath):
+                    os.mkdir(DownloadPath)
 
-                audio[0].download('audio')
+                audio[0].download(DownloadPath)
 
         except Exception as e:
             print(e)
