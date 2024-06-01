@@ -5,7 +5,7 @@ from pytube import YouTube
 from PyQt5.QtWidgets import *
 import sys,os
 
-class YoutubeDownloader(QWidget):
+class YoutubeDownloaderUI(QWidget):
     def __init__(self, parent) -> None:
         super().__init__(parent)
         
@@ -51,7 +51,7 @@ class YoutubeDownloader(QWidget):
         self.ResolutionRadioButtonGroup.addButton(self.CheckBox3, 3)
         self.ResolutionRadioButtonGroup.buttonClicked.connect(self._ResolutionHandle)
         self.Resolution = 'Highest'
-        RowCnt += 1
+        RowCnt += 3
 
         self.DownloadPathLabel = QLabel("Download Path :", self)
         self.Layout.addWidget(self.DownloadPathLabel, RowCnt, 0, 1, 1)
@@ -107,7 +107,7 @@ class YoutubeDownloader(QWidget):
             print(self.Resolution)
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    container = YoutubeDownloader(None)
+    container = YoutubeDownloaderUI(None)
     container.setGeometry(1,90,500,300)
     container.show()
     sys.exit(app.exec_())
