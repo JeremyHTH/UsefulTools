@@ -36,8 +36,6 @@ class GeneralSocket():
             self.Disconnect()
 
     def HandleTCPAcceptedClient(self, Connection, Address: str):
-        self.UpdateMessageBox(f"Accepted from {Address}")
-        # self.UpdateTargetSender()
         try:
             with Connection:
                 while (self.SocketRunning):
@@ -46,7 +44,9 @@ class GeneralSocket():
                     for item in Ready[0]:
                         if (not (data := item.recv(4096).decode()) == ""):
                             # self.UpdateMessageBox(f'{Address} Received: [{data}]')
-                            pass
+                            self.ReceiveMessageBufferMutexLock.acquire()
+                            self.ReceiveMessageBuffer.append((Address, data))
+                            self.ReceiveMessageBufferMutexLock.release()
                             
                     if (self.TCBClientHandlerList[Address]["SendMessageBuffer"] != ""):
                         for item in Ready[1]:
@@ -56,7 +56,7 @@ class GeneralSocket():
                         self.TCBClientHandlerList[Address]["SendMessageBuffer"] = ""
         except Exception as e:
             print(e)
-            
+
         self.TCBClientHandlerList.pop(Address)
 
     def StartTCPClientThread(self, TargetAddress):
@@ -73,8 +73,6 @@ class GeneralSocket():
                     # print(self.SendMessageBuffer)
                     for item in Ready[1]:
                         item.send(self.SendMessageBuffer.encode())
-                        
-                        self.UpdateMessageBox(f'Send: [{self.SendMessageBuffer}]')
 
                     self.SendMessageBuffer = ""
             
